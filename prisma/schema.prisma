@@ -1,0 +1,39 @@
+// Prisma Schema — схема бази даних чат-сервера
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+
+  messages  Message[]
+  files     File[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  authorId  Int
+  createdAt DateTime @default(now())
+
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model File {
+  id           Int      @id @default(autoincrement())
+  filename     String
+  originalName String
+  mimetype     String
+  ownerId      Int
+  createdAt    DateTime @default(now())
+
+  owner        User     @relation(fields: [ownerId], references: [id])
+}

@@ -1,0 +1,27 @@
+# Залежності
+node_modules/
+
+# Збірка
+dist/
+
+# Змінні середовища
+.env
+
+# Логи
+*.log
+npm-debug.log*
+
+# Завантажені файли
+uploads/*
+!uploads/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Тестове покриття
+coverage/
+
+# Prisma
+prisma/migrations/
