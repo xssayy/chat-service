@@ -22,6 +22,3 @@ uploads/*
 
 # Тестове покриття
 coverage/
-
-# Prisma
-prisma/migrations/
