@@ -14,6 +14,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { Response } from 'express';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiConsumes,
+  ApiBody,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { FilesService } from './files.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
@@ -21,6 +30,8 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
  * Контролер для завантаження та отримання файлів.
  * Усі ендпоінти захищені JWT-автентифікацією.
  */
+@ApiTags('files')
+@ApiBearerAuth('JWT')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
@@ -33,6 +44,32 @@ export class FilesController {
    */
   @Post('upload')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Завантаження файлу на сервер' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: { type: 'string', format: 'binary', description: 'Файл (макс. 10 MB, типи: JPEG, PNG, GIF, WebP, PDF, TXT)' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Файл успішно завантажено',
+    schema: {
+      example: {
+        message: 'Файл успішно завантажено',
+        filename: '1716800000000-123456789.png',
+        originalName: 'photo.png',
+        mimetype: 'image/png',
+        chatMessage: '[Файл] photo.png (/files/1716800000000-123456789.png)',
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Файл не надано або тип не підтримується' })
+  @ApiResponse({ status: 401, description: 'Не авторизовано' })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -75,6 +112,11 @@ export class FilesController {
    */
   @Get(':filename')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Отримання файлу за назвою' })
+  @ApiParam({ name: 'filename', description: 'Ім\'я файлу на сервері', example: '1716800000000-123456789.png' })
+  @ApiResponse({ status: 200, description: 'Файл повернуто у відповіді' })
+  @ApiResponse({ status: 401, description: 'Не авторизовано' })
+  @ApiResponse({ status: 404, description: 'Файл не знайдено' })
   getFile(@Param('filename') filename: string, @Res() res: Response) {
     const filePath = this.filesService.getFilePath(filename);
     res.sendFile(filePath);
