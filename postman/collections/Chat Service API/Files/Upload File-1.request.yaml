@@ -1,0 +1,48 @@
+$kind: http-request
+name: Upload File
+url: "{{baseUrl}}/files/upload"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: file
+      src: ""
+      description: Select a file to upload
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201", function () {
+        pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has filename", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("filename");
+      });
+
+      pm.test("Response has originalName", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("originalName");
+      });
+
+      pm.test("Response has mimetype", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("mimetype");
+      });
+
+      pm.test("Response has chatMessage", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("chatMessage");
+      });
+
+      if (pm.response.code === 201) {
+        const json = pm.response.json();
+        pm.environment.set("uploadedFilename", json.filename);
+      }
+    language: text/javascript
+order: 1037

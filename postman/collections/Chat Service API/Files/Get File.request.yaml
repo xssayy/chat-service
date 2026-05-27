@@ -1,0 +1,17 @@
+$kind: http-request
+name: Get File
+method: GET
+url: '{{baseUrl}}/files/{{uploadedFilename}}'
+order: 4000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{authToken}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });

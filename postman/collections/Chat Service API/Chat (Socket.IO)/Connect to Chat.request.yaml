@@ -1,0 +1,31 @@
+$kind: socket.io-request
+name: Connect to Chat
+url: '{{baseUrl}}'
+order: 2000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+queryParams:
+  - key: token
+    value: '{{authToken}}'
+events:
+  - name: history
+    description: 'Receive chat history on connect'
+    subscribeOnConnect: true
+  - name: newMessage
+    description: 'Receive new messages'
+    subscribeOnConnect: true
+  - name: userJoined
+    description: 'Notified when a user joins'
+    subscribeOnConnect: true
+  - name: userLeft
+    description: 'Notified when a user leaves'
+    subscribeOnConnect: true
+  - name: fileUploaded
+    description: 'Notified when a file is uploaded'
+    subscribeOnConnect: true
+settings:
+  path: /socket.io
+  handshakeTimeout: 5000
+  retryCount: 3
+  retryDelay: 1000

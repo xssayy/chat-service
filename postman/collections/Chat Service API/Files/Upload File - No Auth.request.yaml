@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Upload File - No Auth'
+method: POST
+url: '{{baseUrl}}/files/upload'
+order: 3000
+auth:
+  type: noauth
+body:
+  type: formdata
+  content:
+    - key: file
+      type: file
+      src: ''
+      description: 'Select a file to upload'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 401", function () {
+        pm.response.to.have.status(401);
+      });

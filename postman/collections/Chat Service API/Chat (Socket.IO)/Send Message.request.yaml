@@ -1,0 +1,19 @@
+$kind: socket.io-request
+name: Send Message
+url: '{{baseUrl}}'
+order: 4000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+queryParams:
+  - key: token
+    value: '{{authToken}}'
+events:
+  - name: sendMessage
+    description: 'Emit a chat message'
+    subscribeOnConnect: false
+settings:
+  path: /socket.io
+  handshakeTimeout: 5000
+  retryCount: 3
+  retryDelay: 1000

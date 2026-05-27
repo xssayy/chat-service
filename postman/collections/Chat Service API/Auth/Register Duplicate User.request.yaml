@@ -1,0 +1,28 @@
+$kind: http-request
+name: Register Duplicate User
+method: POST
+url: '{{baseUrl}}/auth/register'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "testuser",
+      "password": "password123"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 409", function () {
+        pm.response.to.have.status(409);
+      });
+
+      pm.test("Response has error message", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("message");
+        pm.expect(json.message).to.be.a("string").and.not.empty;
+      });

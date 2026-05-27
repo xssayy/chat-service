@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Get File - No Auth'
+method: GET
+url: '{{baseUrl}}/files/{{uploadedFilename}}'
+order: 5000
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 401", function () {
+        pm.response.to.have.status(401);
+      });
